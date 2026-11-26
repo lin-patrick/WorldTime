@@ -3,142 +3,87 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>工程處 - 數據中控台</title>
+<title>世界時鐘</title>
 <style>
-:root{--bg:#14151a;--panel:#1c1d24;--line:#3a3b45;--text:#f2f2ee;--sub:#a9a9b3;--lime:#d4f53c;--limeText:#14151a;--blue:#9fd3ff;--blueText:#0b2a44;--yellow:#fff06a}
-:root[data-theme="light"]{--bg:#f6f5ef;--panel:#fff;--line:#cfcdc2;--text:#1a1a1f;--sub:#62626c;--limeText:#14151a}
+:root{--bg:#f6f5ef;--panel:#fff;--line:#cfcdc2;--text:#1a1a1f;--sub:#62626c;--lime:#d4f53c;--limeText:#14151a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14151a;--panel:#1c1d24;--line:#3a3b45;--text:#f2f2ee;--sub:#a9a9b3}}
+:root[data-theme="dark"]{--bg:#14151a;--panel:#1c1d24;--line:#3a3b45;--text:#f2f2ee;--sub:#a9a9b3}
 *{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
-body{padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
-header{display:flex;align-items:center;gap:16px;padding:12px 24px;border-bottom:2px solid var(--text);flex-wrap:wrap}
-.logo{width:56px;height:56px;border-radius:12px;background:var(--lime);color:var(--limeText);display:grid;place-items:center;font-size:26px;font-weight:900}
-h1{margin:0;font-size:22px}.date{color:var(--sub);font-size:13px}
-nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 auto}
-nav a,.btn{border:2px solid var(--text);border-radius:999px;padding:6px 14px;font-weight:800;color:var(--text);text-decoration:none;background:transparent;cursor:pointer;font:inherit;font-weight:800}
-nav a.on{background:var(--lime);color:var(--limeText);border-color:var(--lime)}
-main{padding:28px 24px;max-width:1200px;margin:auto}
-h2{display:flex;align-items:center;gap:12px;font-size:24px;margin:0 0 16px}
-.count{background:var(--lime);color:var(--limeText);border-radius:10px;padding:2px 12px;font-size:22px}
-.tools{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-input,select,textarea{background:var(--panel);color:var(--text);border:2px solid var(--line);border-radius:10px;padding:8px 12px;font:inherit}
-.wrap{overflow-x:auto;border:2px solid var(--text);border-radius:16px;background:var(--panel)}
-table{border-collapse:collapse;width:100%;min-width:760px}
-th{text-align:left;padding:14px 16px;border-bottom:2px solid var(--text);font-size:14px}
-td{padding:14px 16px;border-bottom:1px dashed var(--line)}
-tr:last-child td{border-bottom:0}
-.en{color:var(--sub);margin-left:4px}
-.tag{display:inline-block;border-radius:999px;padding:2px 12px;font-weight:800;font-size:14px}
-.sup{background:var(--blue);color:var(--blueText);margin-right:6px}
-.loc{background:var(--yellow);color:#14151a}
-.edit{background:var(--lime);color:var(--limeText);border-color:var(--lime);box-shadow:3px 3px 0 var(--line);font-size:14px}
-#msg{color:var(--sub);padding:24px;text-align:center}
-dialog{background:var(--panel);color:var(--text);border:2px solid var(--text);border-radius:16px;padding:22px;width:min(420px,92vw)}
-dialog::backdrop{background:rgba(0,0,0,.6)}
-label{display:block;margin:10px 0 4px;font-size:13px;color:var(--sub)}
-dialog input,dialog textarea{width:100%}
-.row{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
-:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 20px;border-bottom:2px solid var(--text)}
+.logo{width:44px;height:44px;border-radius:12px;background:var(--lime);color:var(--limeText);display:grid;place-items:center;font-size:22px}
+h1{margin:0;font-size:20px;flex:1}
+.btn{border:2px solid var(--text);border-radius:999px;padding:6px 14px;background:transparent;color:var(--text);font:inherit;font-weight:800;cursor:pointer;min-height:40px}
+.btn:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
+main{max-width:1100px;margin:auto;padding:22px 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.card{background:var(--panel);border:2px solid var(--text);border-radius:18px;padding:18px;box-shadow:5px 5px 0 var(--line)}
+.card.home{background:var(--lime);color:var(--limeText);border-color:var(--lime)}
+.top{display:flex;justify-content:space-between;align-items:center}
+.city{font-size:22px;font-weight:900}.en{font-size:13px;color:var(--sub)}
+.home .en,.home .meta{color:#3b3d12}
+.ico{font-size:28px}
+.time{font-size:clamp(40px,9vw,52px);font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:.02em;margin:10px 0 2px}
+.ampm{font-size:18px;margin-left:6px}
+.date{font-size:15px;font-weight:700}
+.meta{margin-top:10px;font-size:13px;color:var(--sub);display:flex;gap:8px;flex-wrap:wrap}
+.pill{border:1.5px solid currentColor;border-radius:999px;padding:1px 10px}
+footer{text-align:center;color:var(--sub);font-size:13px;padding:0 20px 24px}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo">寶</div>
-  <div><h1>工程處 - 數據中控台</h1><div class="date" id="date"></div></div>
-  <nav>
-    <a href="#overview">總覽</a><a href="#attendance">出勤</a><a href="#dispatch">人員派遣</a>
-    <a href="#projects">專案</a><a href="#tracker">追蹤清單</a><a href="#people" class="on">人員名單</a>
-  </nav>
-  <button class="btn" id="theme">日間模式</button>
+  <div class="logo" aria-hidden="true">🌏</div>
+  <h1>世界時鐘</h1>
+  <button class="btn" id="fmt">12 小時制</button>
+  <button class="btn" id="theme">切換主題</button>
 </header>
-
-<main>
-  <h2><span class="count" id="count">0</span>集團同仁名單</h2>
-  <div class="tools">
-    <input id="q" type="search" placeholder="搜尋姓名、單位、職稱" aria-label="搜尋">
-    <button class="btn" id="add">新增同仁</button>
-    <button class="btn" id="reload">重新整理</button>
-  </div>
-  <div class="wrap">
-    <table>
-      <thead><tr><th></th><th>姓名</th><th>單位</th><th>職稱</th><th>目前位置</th><th>備註</th></tr></thead>
-      <tbody id="body"></tbody>
-    </table>
-    <div id="msg">正在連線，請稍候…</div>
-  </div>
-</main>
-
-<dialog id="dlg">
-  <h3 id="dtitle" style="margin:0 0 6px"></h3>
-  <label>中文姓名</label><input id="f_name">
-  <label>英文名</label><input id="f_en">
-  <label>單位</label><input id="f_unit">
-  <label><input type="checkbox" id="f_sup" style="width:auto"> 支援人員</label>
-  <label>職稱</label><input id="f_title">
-  <label>目前位置</label><input id="f_loc" placeholder="台灣">
-  <label>備註</label><textarea id="f_note" rows="2"></textarea>
-  <div class="row"><button class="btn" id="cancel">取消</button><button class="btn edit" id="save">儲存變更</button></div>
-</dialog>
+<main><div class="grid" id="grid"></div></main>
+<footer>時間由裝置時鐘與瀏覽器時區資料計算，芝加哥與舊金山會自動處理日光節約時間。</footer>
 
 <script>
-// ====== 設定：貼上 Apps Script「網頁應用程式」網址 ======
-const API_URL = "";   // 例如 https://script.google.com/macros/s/xxxx/exec
-// =======================================================
-
-const DEMO = [
- {id:2,name:"葉泰宏",en:"Leo Yeh",unit:"工程處",sup:false,title:"協理",loc:"台灣",note:""},
- {id:3,name:"石宛明",en:"Justin Shih",unit:"系統工程部",sup:false,title:"經理",loc:"台灣",note:""},
- {id:4,name:"楊青和",en:"Peter Yang",unit:"寶禾印尼公司",sup:true,title:"經理",loc:"雅加達",note:"常駐印尼寶禾公司"}
+const ZONES=[
+ {tz:"Asia/Taipei",city:"台北",en:"Taipei",home:true},
+ {tz:"Asia/Jakarta",city:"雅加達",en:"Jakarta"},
+ {tz:"America/Chicago",city:"芝加哥",en:"Chicago"},
+ {tz:"America/Los_Angeles",city:"舊金山",en:"San Francisco"}
 ];
-let rows=[], editing=null;
-const $=id=>document.getElementById(id);
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let h12=false;
+const grid=document.getElementById("grid");
+grid.innerHTML=ZONES.map((z,i)=>`<article class="card${z.home?" home":""}">
+  <div class="top"><div><div class="city">${z.city}</div><div class="en">${z.en}</div></div><div class="ico" id="i${i}"></div></div>
+  <div class="time" id="t${i}">--:--:--</div>
+  <div class="date" id="d${i}"></div>
+  <div class="meta" id="m${i}"></div></article>`).join("");
 
-$("date").textContent=new Date().toLocaleDateString("zh-TW",{year:"numeric",month:"2-digit",day:"2-digit",weekday:"short"});
-
-async function load(){
-  $("msg").style.display="block";$("msg").textContent="正在連線，請稍候…";
-  if(!API_URL){rows=DEMO;$("msg").textContent="尚未設定 API_URL，目前顯示範例資料。";render();return}
-  try{
-    const r=await fetch(API_URL); const j=await r.json();
-    rows=j.rows; $("msg").style.display="none"; render();
-  }catch(e){$("msg").textContent="連線失敗：請確認 Apps Script 已部署為「任何人」可存取。"}
+function offsetMin(tz,now){
+  const p=new Intl.DateTimeFormat("en-US",{timeZone:tz,timeZoneName:"shortOffset"}).formatToParts(now).find(x=>x.type==="timeZoneName").value;
+  const m=p.match(/GMT([+-])(\d+)(?::(\d+))?/); if(!m)return 0;
+  return (m[1]==="-"?-1:1)*(+m[2]*60+(+(m[3]||0)));
 }
-function render(){
-  const k=$("q").value.trim().toLowerCase();
-  const list=rows.filter(r=>!k||[r.name,r.en,r.unit,r.title].join(" ").toLowerCase().includes(k));
-  $("count").textContent=list.length;
-  $("body").innerHTML=list.map(r=>`<tr>
-    <td><button class="btn edit" data-id="${r.id}">編輯</button></td>
-    <td><b>${esc(r.name)}</b><span class="en">${esc(r.en)}</span></td>
-    <td>${r.sup?'<span class="tag sup">支援</span>':''}${esc(r.unit)}</td>
-    <td>${esc(r.title)}</td>
-    <td>${r.loc&&r.loc!=="台灣"?`<span class="tag loc">${esc(r.loc)}</span>`:esc(r.loc)}</td>
-    <td>${esc(r.note)}</td></tr>`).join("");
+function fmtOff(min){const s=min<0?"-":"+",a=Math.abs(min);return "UTC"+s+Math.floor(a/60)+(a%60?":"+String(a%60).padStart(2,"0"):"")}
+function tick(){
+  const now=new Date(), base=offsetMin(ZONES[0].tz,now);
+  ZONES.forEach((z,i)=>{
+    const tf=new Intl.DateTimeFormat("zh-TW",{timeZone:z.tz,hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:h12});
+    const parts=tf.formatToParts(now); let out="",ap="";
+    parts.forEach(p=>{if(p.type==="dayPeriod")ap=p.value;else if(["hour","minute","second","literal"].includes(p.type))out+=p.value});
+    out=out.replace(/[^\d:]/g,"").replace(/^(\d):/,"0$1:");
+    document.getElementById("t"+i).innerHTML=out+(ap?`<span class="ampm">${ap}</span>`:"");
+    document.getElementById("d"+i).textContent=new Intl.DateTimeFormat("zh-TW",{timeZone:z.tz,year:"numeric",month:"long",day:"numeric",weekday:"long"}).format(now);
+    const hr=+new Intl.DateTimeFormat("en-US",{timeZone:z.tz,hour:"numeric",hour12:false}).format(now)%24;
+    document.getElementById("i"+i).textContent=hr>=6&&hr<18?"☀️":"🌙";
+    const off=offsetMin(z.tz,now), diff=(off-base)/60;
+    const rel=z.home?"本地時間":(diff===0?"與台北相同":"與台北"+(diff>0?"快 ":"慢 ")+Math.abs(diff)+" 小時");
+    document.getElementById("m"+i).innerHTML=`<span class="pill">${fmtOff(off)}</span><span>${rel}</span>`;
+  });
 }
-function openDlg(r){
-  editing=r; $("dtitle").textContent=r?"編輯同仁":"新增同仁";
-  const v=r||{name:"",en:"",unit:"",sup:false,title:"",loc:"台灣",note:""};
-  $("f_name").value=v.name;$("f_en").value=v.en;$("f_unit").value=v.unit;
-  $("f_sup").checked=v.sup;$("f_title").value=v.title;$("f_loc").value=v.loc;$("f_note").value=v.note;
-  $("dlg").showModal();
-}
-async function save(){
-  const d={id:editing?editing.id:null,name:$("f_name").value.trim(),en:$("f_en").value.trim(),unit:$("f_unit").value.trim(),
-    sup:$("f_sup").checked,title:$("f_title").value.trim(),loc:$("f_loc").value.trim()||"台灣",note:$("f_note").value.trim()};
-  if(!d.name){$("f_name").focus();return}
-  if(!API_URL){alert("尚未設定 API_URL，無法寫回 Google Sheets。");return}
-  $("save").disabled=true;
-  try{
-    await fetch(API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(d)});
-    $("dlg").close(); setTimeout(load,1200);
-  }finally{$("save").disabled=false}
-}
-$("body").addEventListener("click",e=>{const b=e.target.closest("[data-id]");if(b)openDlg(rows.find(r=>r.id==b.dataset.id))});
-$("add").onclick=()=>openDlg(null);$("cancel").onclick=()=>$("dlg").close();$("save").onclick=save;
-$("reload").onclick=load;$("q").oninput=render;
-$("theme").onclick=()=>{const l=document.documentElement.dataset.theme==="light";
-  document.documentElement.dataset.theme=l?"dark":"light";$("theme").textContent=l?"日間模式":"夜間模式"};
-load();
+document.getElementById("fmt").onclick=e=>{h12=!h12;e.target.textContent=h12?"24 小時制":"12 小時制";tick()};
+document.getElementById("theme").onclick=()=>{
+  const r=document.documentElement,dark=getComputedStyle(r).getPropertyValue("--bg").trim()==="#14151a";
+  r.dataset.theme=dark?"light":"dark";
+};
+tick();setInterval(tick,1000);
 </script>
 </body>
 </html>
