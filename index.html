@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>世界時鐘</title>
+<title>World Clock</title>
 <style>
 :root{--bg:#f6f5ef;--panel:#fff;--line:#cfcdc2;--text:#1a1a1f;--sub:#62626c;--lime:#d4f53c;--limeText:#14151a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14151a;--panel:#1c1d24;--line:#3a3b45;--text:#f2f2ee;--sub:#a9a9b3}}
@@ -22,12 +22,14 @@ main{max-width:1100px;margin:0 auto;padding:24px clamp(24px,6vw,64px)}
 .top{display:flex;justify-content:space-between;align-items:center}
 .city{font-size:22px;font-weight:900}.en{font-size:13px;color:var(--sub)}
 .home .en,.home .meta{color:#3b3d12}
-.ico{font-size:28px}
+.ico{font-size:28px;line-height:1}.badge{display:flex;align-items:center;gap:8px;white-space:nowrap}.ap{font-size:15px;font-weight:800;border:1.5px solid currentColor;border-radius:999px;padding:1px 10px}.ap:empty{display:none}
 .time{font-size:clamp(40px,9vw,52px);font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:.02em;margin:10px 0 2px}
 .ampm{font-size:18px;margin-left:6px}
 .date{font-size:15px;font-weight:700}
 .meta{margin-top:10px;font-size:13px;color:var(--sub);display:flex;gap:8px;flex-wrap:wrap}
 .pill{border:1.5px solid currentColor;border-radius:999px;padding:1px 10px}
+.wx{margin-top:12px;display:grid;gap:2px;font-weight:700;font-size:15px}
+.wx small{font-weight:400;opacity:.8;font-size:13px}
 .fx{margin-top:12px;padding-top:10px;border-top:1.5px dashed currentColor;font-size:14px;font-weight:700;display:grid;gap:2px}
 .fx small{font-weight:400;opacity:.75}
 .rates{margin-top:22px;background:var(--panel);border:2px solid var(--text);border-radius:18px;padding:16px 18px}
@@ -42,8 +44,8 @@ footer{text-align:center;color:var(--sub);font-size:13px;padding:0 clamp(24px,6v
 </head>
 <body>
 <header>
-  <div class="logo" aria-hidden="true">🌏</div>
-  <h1>世界時鐘</h1>
+  <div class="logo" role="img" aria-label="Taipei 101"><svg width="34" height="34" viewBox="0 0 32 38" fill="currentColor" aria-hidden="true"><line x1="16" y1="1" x2="16" y2="6" stroke="currentColor" stroke-width="1.2"/><polygon points="14.5,6 17.5,6 18.5,10 13.5,10"/><polygon points="11,10 21,10 19.8,13 12.2,13"/><polygon points="11,13 21,13 19.8,16 12.2,16"/><polygon points="11,16 21,16 19.8,19 12.2,19"/><polygon points="11,19 21,19 19.8,22 12.2,22"/><polygon points="11,22 21,22 19.8,25 12.2,25"/><polygon points="11,25 21,25 19.8,28 12.2,28"/><polygon points="11,28 21,28 19.8,31 12.2,31"/><polygon points="11,31 21,31 19.8,34 12.2,34"/><rect x="9" y="34" width="14" height="3"/><rect x="1" y="28" width="6" height="9" opacity=".55"/><rect x="25" y="24" width="6" height="13" opacity=".55"/></svg></div>
+  <h1>World Clock</h1>
   <button class="btn" id="fmt">12 小時制</button>
   <button class="btn" id="theme">切換主題</button>
 </header>
@@ -55,25 +57,30 @@ footer{text-align:center;color:var(--sub);font-size:13px;padding:0 clamp(24px,6v
     <div class="row">
       <label>1 USD = <input id="r_twd" type="number" step="0.01" min="0" inputmode="decimal"> TWD</label>
       <label>1 USD = <input id="r_idr" type="number" step="1" min="0" inputmode="decimal"> IDR</label>
+      <label>1 USD = <input id="r_cny" type="number" step="0.0001" min="0" inputmode="decimal"> CNY</label>
+      <label>1 USD = <input id="r_jpy" type="number" step="0.01" min="0" inputmode="decimal"> JPY</label>
     </div>
   </section>
 </main>
-<footer>時間由裝置時鐘與瀏覽器時區資料計算，芝加哥與舊金山會自動處理日光節約時間。</footer>
+<footer>時間由裝置時鐘與瀏覽器時區資料計算，芝加哥與舊金山會自動處理日光節約時間。<span id="wxnote">天氣為 2026/11/26 擷取的快照。</span></footer>
 
 <script>
 const ZONES=[
- {tz:"Asia/Taipei",city:"台北",en:"Taipei",home:true,cur:"TWD",amt:1},
- {tz:"Asia/Jakarta",city:"雅加達",en:"Jakarta",cur:"IDR",amt:1000},
- {tz:"America/Chicago",city:"芝加哥",en:"Chicago",cur:"USD",amt:1},
- {tz:"America/Los_Angeles",city:"舊金山",en:"San Francisco",cur:"USD",amt:1}
+ {tz:"Asia/Taipei",city:"台北",en:"Taipei",home:true,cur:"TWD",amt:1,wx:{t:21.1,hi:21.7,lo:17.2,p:45,c:"多雲（今日預報有毛毛雨）",i:"☁️"}},
+ {tz:"America/Chicago",city:"芝加哥",en:"Chicago",cur:"USD",amt:1,wx:{t:6.6,hi:7.4,lo:2.9,p:10,c:"陰天",i:"☁️"}},
+ {tz:"America/Los_Angeles",city:"舊金山",en:"San Francisco",cur:"USD",amt:1,wx:{t:13.7,hi:18.1,lo:12.2,p:15,c:"多雲",i:"☁️"}},
+ {tz:"Asia/Jakarta",city:"雅加達",en:"Jakarta",cur:"IDR",amt:1000,rev:true,k:"idr",wx:{t:32.1,hi:32.2,lo:25.5,p:55,c:"多雲（今日預報有雷雨）",i:"⛈️"}},
+ {tz:"Asia/Shanghai",city:"合肥",en:"Hefei",cur:"CNY",amt:1,wx:{t:18.2,hi:20.2,lo:7.3,p:0,c:"晴",i:"☀️"}},
+ {tz:"Asia/Tokyo",city:"東京",en:"Tokyo",cur:"JPY",amt:1,rev:true,k:"jpy",wx:{t:13.5,hi:15.0,lo:9.0,p:0,c:"晴",i:"☀️"}}
 ];
 let h12=false;
 const grid=document.getElementById("grid");
 grid.innerHTML=ZONES.map((z,i)=>`<article class="card${z.home?" home":""}">
-  <div class="top"><div><div class="city">${z.city}</div><div class="en">${z.en}</div></div><div class="ico" id="i${i}"></div></div>
+  <div class="top"><div><div class="city">${z.city}</div><div class="en">${z.en}</div></div><div class="badge"><span class="ap" id="a${i}"></span><span class="ico" id="i${i}"></span></div></div>
   <div class="time" id="t${i}">--:--:--</div>
   <div class="date" id="d${i}"></div>
   <div class="meta" id="m${i}"></div>
+  <div class="wx" id="w${i}"></div>
   <div class="fx" id="x${i}"></div></article>`).join("");
 
 function offsetMin(tz,now){
@@ -89,7 +96,7 @@ function tick(){
     const parts=tf.formatToParts(now); let out="",ap="";
     parts.forEach(p=>{if(p.type==="dayPeriod")ap=p.value;else if(["hour","minute","second","literal"].includes(p.type))out+=p.value});
     out=out.replace(/[^\d:]/g,"").replace(/^(\d):/,"0$1:");
-    document.getElementById("t"+i).innerHTML=out+(ap?`<span class="ampm">${ap}</span>`:"");
+    document.getElementById("t"+i).textContent=out;document.getElementById("a"+i).textContent=ap;
     document.getElementById("d"+i).textContent=new Intl.DateTimeFormat("zh-TW",{timeZone:z.tz,year:"numeric",month:"long",day:"numeric",weekday:"long"}).format(now);
     const hr=+new Intl.DateTimeFormat("en-US",{timeZone:z.tz,hour:"numeric",hour12:false}).format(now)%24;
     document.getElementById("i"+i).textContent=hr>=6&&hr<18?"☀️":"🌙";
@@ -103,27 +110,65 @@ document.getElementById("theme").onclick=()=>{
   const r=document.documentElement,dark=getComputedStyle(r).getPropertyValue("--bg").trim()==="#14151a";
   r.dataset.theme=dark?"light":"dark";
 };
-let rates={twd:33.0,idr:18300};
-try{const s=JSON.parse(localStorage.getItem("wc_rates")||"null");if(s&&s.twd>0&&s.idr>0)rates=s}catch(e){}
+let rates={twd:33.0,idr:18300,cny:6.67,jpy:160};
+try{const s=JSON.parse(localStorage.getItem("wc_rates")||"null");if(s&&s.twd>0&&s.idr>0)rates={twd:s.twd,idr:s.idr,cny:s.cny>0?s.cny:6.67,jpy:s.jpy>0?s.jpy:160}}catch(e){}
 const fnum=n=>n.toLocaleString("en-US",{maximumFractionDigits:n<1?4:2});
+function renderWx(){
+  ZONES.forEach((z,i)=>{
+    const w=z.wx;
+    document.getElementById("w"+i).innerHTML=`<span>${w.i} ${w.t}°C　${w.c}</span><small>最高 ${w.hi}° / 最低 ${w.lo}°　降雨機率 ${w.p}%</small>`;
+  });
+}
 function renderFx(){
-  const toTWD={TWD:1,USD:rates.twd,IDR:rates.twd/rates.idr},toUSD={TWD:1/rates.twd,USD:1,IDR:1/rates.idr};
+  const toTWD={TWD:1,USD:rates.twd,IDR:rates.twd/rates.idr,CNY:rates.twd/rates.cny},toUSD={TWD:1/rates.twd,USD:1,IDR:1/rates.idr,CNY:1/rates.cny};
   ZONES.forEach((z,i)=>{
     const a=z.amt,rows=[];
-    if(z.cur!=="TWD")rows.push(`<span>${fnum(a)} ${z.cur} ≈ ${fnum(a*toTWD[z.cur])} TWD</span>`);
-    if(z.cur!=="USD")rows.push(`<span>${fnum(a)} ${z.cur} ≈ ${fnum(a*toUSD[z.cur])} USD</span>`);
+    if(z.rev){rows.push(`<span>1 TWD ≈ ${fnum(rates[z.k]/rates.twd)} ${z.cur}</span>`);rows.push(`<span>1 USD ≈ ${fnum(rates[z.k])} ${z.cur}</span>`)}else if(z.cur!=="TWD")rows.push(`<span>${fnum(a)} ${z.cur} ≈ ${fnum(a*toTWD[z.cur])} TWD</span>`);
+    if(z.rev){}else if(z.cur==="CNY")rows.push(`<span>1 USD ≈ ${fnum(rates.cny)} CNY</span>`);else if(z.cur!=="USD")rows.push(`<span>${fnum(a)} ${z.cur} ≈ ${fnum(a*toUSD[z.cur])} USD</span>`);
     document.getElementById("x"+i).innerHTML=rows.join("")+`<small>當地貨幣 ${z.cur}</small>`;
   });
 }
-const rt=document.getElementById("r_twd"),ri=document.getElementById("r_idr");
-rt.value=rates.twd;ri.value=rates.idr;
+const rt=document.getElementById("r_twd"),ri=document.getElementById("r_idr"),rc=document.getElementById("r_cny"),rj=document.getElementById("r_jpy");
+rt.value=rates.twd;ri.value=rates.idr;rc.value=rates.cny;rj.value=rates.jpy;
 function onRate(){
-  const t=parseFloat(rt.value),r=parseFloat(ri.value);
-  if(t>0&&r>0){rates={twd:t,idr:r};try{localStorage.setItem("wc_rates",JSON.stringify(rates))}catch(e){}renderFx()}
+  const t=parseFloat(rt.value),r=parseFloat(ri.value),c=parseFloat(rc.value),j=parseFloat(rj.value);
+  if(t>0&&r>0&&c>0&&j>0){rates={twd:t,idr:r,cny:c,jpy:j};try{localStorage.setItem("wc_rates",JSON.stringify(rates))}catch(e){}renderFx()}
 }
-rt.oninput=onRate;ri.oninput=onRate;
+rt.oninput=onRate;ri.oninput=onRate;rc.oninput=onRate;rj.oninput=onRate;
 renderFx();
-tick();setInterval(tick,1000);
+
+// ===== 天氣：Open-Meteo（免金鑰），每天早上 6 點後更新一次，其餘時間用快取 =====
+const COORD={"Asia/Taipei":[25.033,121.565],"America/Chicago":[41.878,-87.629],"America/Los_Angeles":[37.775,-122.419],"Asia/Jakarta":[-6.209,106.846],"Asia/Shanghai":[31.821,117.227],"Asia/Tokyo":[35.676,139.650]};
+function wmo(c){
+  if(c===0)return["晴","\u2600\ufe0f"];if(c===1)return["大致晴朗","\ud83c\udf24\ufe0f"];if(c===2)return["局部多雲","\u26c5"];if(c===3)return["陰天","\u2601\ufe0f"];
+  if(c===45||c===48)return["霧","\ud83c\udf2b\ufe0f"];if(c>=51&&c<=57)return["毛毛雨","\ud83c\udf26\ufe0f"];if(c>=61&&c<=67)return["下雨","\ud83c\udf27\ufe0f"];
+  if(c>=71&&c<=77)return["下雪","\u2744\ufe0f"];if(c>=80&&c<=82)return["陣雨","\ud83c\udf26\ufe0f"];if(c===85||c===86)return["陣雪","\ud83c\udf28\ufe0f"];
+  if(c>=95)return["雷雨","\u26c8\ufe0f"];return["多雲","\u2601\ufe0f"];
+}
+function applyWx(list,t,stale){
+  list.forEach((w,i)=>{ if(ZONES[i])ZONES[i].wx=w; });
+  renderWx();
+  const d=new Date(t),f=d.toLocaleString("zh-TW",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit",hour12:false});
+  document.getElementById("wxnote").textContent="天氣來自 Open-Meteo，每天早上 6 點後更新一次，溫度為更新當下的氣溫。上次更新："+f+(stale?"（本次連線失敗，顯示舊資料）":"");
+}
+async function refreshWx(){
+  let cache=null;
+  try{cache=JSON.parse(localStorage.getItem("wc_wx")||"null")}catch(e){}
+  const now=new Date(),b=new Date(now);b.setHours(6,0,0,0);if(now<b)b.setDate(b.getDate()-1);
+  if(cache&&cache.t>=b.getTime()&&cache.d.length===ZONES.length){applyWx(cache.d,cache.t,false);return}
+  try{
+    const la=ZONES.map(z=>COORD[z.tz][0]).join(","),lo=ZONES.map(z=>COORD[z.tz][1]).join(",");
+    const u="https://api.open-meteo.com/v1/forecast?latitude="+la+"&longitude="+lo+"&current=temperature_2m,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=1";
+    const r=await fetch(u);if(!r.ok)throw new Error(r.status);
+    const j=await r.json(),arr=Array.isArray(j)?j:[j];
+    const list=arr.map(x=>{const m=wmo(x.current.weather_code),r1=n=>Math.round(n*10)/10;
+      return{t:r1(x.current.temperature_2m),hi:r1(x.daily.temperature_2m_max[0]),lo:r1(x.daily.temperature_2m_min[0]),p:x.daily.precipitation_probability_max[0]??0,c:m[0],i:m[1]}});
+    const t=Date.now();
+    try{localStorage.setItem("wc_wx",JSON.stringify({t:t,d:list}))}catch(e){}
+    applyWx(list,t,false);
+  }catch(e){ if(cache&&cache.d.length===ZONES.length)applyWx(cache.d,cache.t,true); }
+}
+renderWx();refreshWx();setInterval(refreshWx,600000);tick();setInterval(tick,1000);
 </script>
 </body>
 </html>
