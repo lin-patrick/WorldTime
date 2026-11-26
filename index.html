@@ -5,19 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>世界時鐘</title>
 <style>
-:root{--bg:#f6f5ef;--panel:#fff;--line:#cfcdc2;--text:#1a1a1f;--sub:#62626c;--lime:#d4f53c;--limeText:#14151a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{--bg:#f6f5ef;--panel:#fff;--line:#cfcdc2;--text:#1a1a1f;--sub:#62626c;--lime:#d4f53c;--limeText:#14151a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14151a;--panel:#1c1d24;--line:#3a3b45;--text:#f2f2ee;--sub:#a9a9b3}}
 :root[data-theme="dark"]{--bg:#14151a;--panel:#1c1d24;--line:#3a3b45;--text:#f2f2ee;--sub:#a9a9b3}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
-header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 20px;border-bottom:2px solid var(--text)}
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px clamp(24px,6vw,64px);border-bottom:2px solid var(--text)}
 .logo{width:44px;height:44px;border-radius:12px;background:var(--lime);color:var(--limeText);display:grid;place-items:center;font-size:22px}
 h1{margin:0;font-size:20px;flex:1}
 .btn{border:2px solid var(--text);border-radius:999px;padding:6px 14px;background:transparent;color:var(--text);font:inherit;font-weight:800;cursor:pointer;min-height:40px}
 .btn:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
-main{max-width:1100px;margin:auto;padding:22px 20px}
+main{max-width:1100px;margin:0 auto;padding:24px clamp(24px,6vw,64px)}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-.card{background:var(--panel);border:2px solid var(--text);border-radius:18px;padding:18px;box-shadow:5px 5px 0 var(--line)}
+.card{background:var(--panel);border:2px solid var(--text);border-radius:18px;padding:18px;box-shadow:0 5px 0 var(--line)}
 .card.home{background:var(--lime);color:var(--limeText);border-color:var(--lime)}
 .top{display:flex;justify-content:space-between;align-items:center}
 .city{font-size:22px;font-weight:900}.en{font-size:13px;color:var(--sub)}
@@ -28,7 +28,16 @@ main{max-width:1100px;margin:auto;padding:22px 20px}
 .date{font-size:15px;font-weight:700}
 .meta{margin-top:10px;font-size:13px;color:var(--sub);display:flex;gap:8px;flex-wrap:wrap}
 .pill{border:1.5px solid currentColor;border-radius:999px;padding:1px 10px}
-footer{text-align:center;color:var(--sub);font-size:13px;padding:0 20px 24px}
+.fx{margin-top:12px;padding-top:10px;border-top:1.5px dashed currentColor;font-size:14px;font-weight:700;display:grid;gap:2px}
+.fx small{font-weight:400;opacity:.75}
+.rates{margin-top:22px;background:var(--panel);border:2px solid var(--text);border-radius:18px;padding:16px 18px}
+.rates h2{margin:0 0 4px;font-size:16px}
+.rates p{margin:0 0 12px;font-size:13px;color:var(--sub)}
+.rates .row{display:flex;gap:16px;flex-wrap:wrap}
+.rates label{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+.rates input{width:110px;background:var(--bg);color:var(--text);border:2px solid var(--line);border-radius:10px;padding:6px 10px;font:inherit;font-variant-numeric:tabular-nums}
+.rates input:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
+footer{text-align:center;color:var(--sub);font-size:13px;padding:0 clamp(24px,6vw,64px) 24px}
 </style>
 </head>
 <body>
@@ -38,15 +47,25 @@ footer{text-align:center;color:var(--sub);font-size:13px;padding:0 20px 24px}
   <button class="btn" id="fmt">12 小時制</button>
   <button class="btn" id="theme">切換主題</button>
 </header>
-<main><div class="grid" id="grid"></div></main>
+<main>
+  <div class="grid" id="grid"></div>
+  <section class="rates">
+    <h2>參考匯率（可自行修改）</h2>
+    <p>網頁無法即時連線取得匯率，預設為 2026/11/25 前後的市場中間價，約略值，僅供參考，實際換匯以銀行牌價為準。</p>
+    <div class="row">
+      <label>1 USD = <input id="r_twd" type="number" step="0.01" min="0" inputmode="decimal"> TWD</label>
+      <label>1 USD = <input id="r_idr" type="number" step="1" min="0" inputmode="decimal"> IDR</label>
+    </div>
+  </section>
+</main>
 <footer>時間由裝置時鐘與瀏覽器時區資料計算，芝加哥與舊金山會自動處理日光節約時間。</footer>
 
 <script>
 const ZONES=[
- {tz:"Asia/Taipei",city:"台北",en:"Taipei",home:true},
- {tz:"Asia/Jakarta",city:"雅加達",en:"Jakarta"},
- {tz:"America/Chicago",city:"芝加哥",en:"Chicago"},
- {tz:"America/Los_Angeles",city:"舊金山",en:"San Francisco"}
+ {tz:"Asia/Taipei",city:"台北",en:"Taipei",home:true,cur:"TWD",amt:1},
+ {tz:"Asia/Jakarta",city:"雅加達",en:"Jakarta",cur:"IDR",amt:1000},
+ {tz:"America/Chicago",city:"芝加哥",en:"Chicago",cur:"USD",amt:1},
+ {tz:"America/Los_Angeles",city:"舊金山",en:"San Francisco",cur:"USD",amt:1}
 ];
 let h12=false;
 const grid=document.getElementById("grid");
@@ -54,7 +73,8 @@ grid.innerHTML=ZONES.map((z,i)=>`<article class="card${z.home?" home":""}">
   <div class="top"><div><div class="city">${z.city}</div><div class="en">${z.en}</div></div><div class="ico" id="i${i}"></div></div>
   <div class="time" id="t${i}">--:--:--</div>
   <div class="date" id="d${i}"></div>
-  <div class="meta" id="m${i}"></div></article>`).join("");
+  <div class="meta" id="m${i}"></div>
+  <div class="fx" id="x${i}"></div></article>`).join("");
 
 function offsetMin(tz,now){
   const p=new Intl.DateTimeFormat("en-US",{timeZone:tz,timeZoneName:"shortOffset"}).formatToParts(now).find(x=>x.type==="timeZoneName").value;
@@ -83,6 +103,26 @@ document.getElementById("theme").onclick=()=>{
   const r=document.documentElement,dark=getComputedStyle(r).getPropertyValue("--bg").trim()==="#14151a";
   r.dataset.theme=dark?"light":"dark";
 };
+let rates={twd:33.0,idr:18300};
+try{const s=JSON.parse(localStorage.getItem("wc_rates")||"null");if(s&&s.twd>0&&s.idr>0)rates=s}catch(e){}
+const fnum=n=>n.toLocaleString("en-US",{maximumFractionDigits:n<1?4:2});
+function renderFx(){
+  const toTWD={TWD:1,USD:rates.twd,IDR:rates.twd/rates.idr},toUSD={TWD:1/rates.twd,USD:1,IDR:1/rates.idr};
+  ZONES.forEach((z,i)=>{
+    const a=z.amt,rows=[];
+    if(z.cur!=="TWD")rows.push(`<span>${fnum(a)} ${z.cur} ≈ ${fnum(a*toTWD[z.cur])} TWD</span>`);
+    if(z.cur!=="USD")rows.push(`<span>${fnum(a)} ${z.cur} ≈ ${fnum(a*toUSD[z.cur])} USD</span>`);
+    document.getElementById("x"+i).innerHTML=rows.join("")+`<small>當地貨幣 ${z.cur}</small>`;
+  });
+}
+const rt=document.getElementById("r_twd"),ri=document.getElementById("r_idr");
+rt.value=rates.twd;ri.value=rates.idr;
+function onRate(){
+  const t=parseFloat(rt.value),r=parseFloat(ri.value);
+  if(t>0&&r>0){rates={twd:t,idr:r};try{localStorage.setItem("wc_rates",JSON.stringify(rates))}catch(e){}renderFx()}
+}
+rt.oninput=onRate;ri.oninput=onRate;
+renderFx();
 tick();setInterval(tick,1000);
 </script>
 </body>
